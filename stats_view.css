@@ -1,0 +1,225 @@
+/* ==================== 成績タブ：問題別フィルター＆ソートUI ==================== */
+.stats-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-filter-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.stats-filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.stats-chip {
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-sub);
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.stats-chip.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #ffffff;
+}
+
+.stats-chip[data-filter="mastered"].active {
+  background: var(--cta);
+  border-color: var(--cta);
+}
+
+.stats-chip[data-filter="weak"].active {
+  background: var(--wrong);
+  border-color: var(--wrong);
+}
+
+.stats-chip[data-filter="pinned"].active {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.stats-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stats-select-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stats-mini-select {
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text);
+  max-width: 100%;
+}
+
+.stats-result-count {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.stats-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-empty-msg {
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  padding: 22px 14px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.stats-card-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stats-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stats-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.stats-status-badge {
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.stats-status-badge.mastered {
+  background: var(--correct-soft);
+  color: var(--correct);
+}
+
+.stats-status-badge.weak {
+  background: var(--wrong-soft);
+  color: var(--wrong);
+}
+
+.stats-status-badge.unstudied {
+  background: var(--surface-muted);
+  color: var(--muted);
+}
+
+.stats-cat-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-tint);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 999px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-pin-toggle {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+
+.stats-pin-toggle.pinned {
+  color: var(--amber);
+}
+
+.stats-card-qa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.stats-card-q {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.stats-card-a {
+  font-size: 0.82rem;
+  color: var(--text-sub);
+}
+
+.stats-card-metrics {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+.metric-pill {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--text-sub);
+}
+
+.metric-pill.wrong.has-val {
+  background: var(--wrong-soft);
+  color: var(--wrong);
+}
+
+.metric-pill.correct.has-val {
+  background: var(--correct-soft);
+  color: var(--correct);
+}
