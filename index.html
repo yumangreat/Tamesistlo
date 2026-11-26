@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="StudyLoop">
+  <title>StudyLoop Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+  <!-- ==================== 1. スタート設定画面 ==================== -->
+  <div id="view-setup" class="view-container">
+    <header class="setup-header">
+      <div class="brand">
+        <span class="brand-logo">StudyLoop</span>
+      </div>
+      <div class="deck-bar">
+        <select id="deck-select" aria-label="デッキ選択"></select>
+        <button type="button" id="btn-new-deck" class="btn-sub">＋新規</button>
+        <button type="button" id="btn-rename-deck" class="btn-icon" title="デッキ名変更">✎</button>
+        <button type="button" id="btn-delete-deck" class="btn-icon" title="デッキ削除">🗑</button>
+        <button type="button" id="btn-theme" class="btn-icon" title="テーマ切替">🌙</button>
+      </div>
+    </header>
+
+    <nav class="tab-nav">
+      <button type="button" class="tab-btn active" data-tab="setup">学習設定</button>
+      <button type="button" class="tab-btn" data-tab="sheet">直前一覧</button>
+      <button type="button" class="tab-btn" data-tab="stats">成績</button>
+      <button type="button" class="tab-btn" data-tab="manage">追加・管理</button>
+    </nav>
+
+    <!-- タブ1: 学習設定 -->
+    <main id="panel-setup" class="tab-panel active">
+      <section class="setup-card">
+        <h2 class="section-label">進行ルール</h2>
+        <div class="grid-2">
+          <button type="button" class="choice-pill mode-btn active" data-mode="smart">標準（5問蓄積/周期復習）</button>
+          <button type="button" class="choice-pill mode-btn" data-mode="all">全問通して学習</button>
+          <button type="button" class="choice-pill mode-btn" data-mode="weak">苦手・★特訓</button>
+          <button type="button" class="choice-pill mode-btn" data-mode="srs">忘却曲線（SRS）</button>
+        </div>
+      </section>
+
+      <section class="setup-card">
+        <h2 class="section-label">出題形式</h2>
+        <div class="grid-3">
+          <button type="button" class="choice-pill format-btn active" data-format="flip">カードめくり</button>
+          <button type="button" class="choice-pill format-btn" data-format="choice">ランダム4択</button>
+          <button type="button" class="choice-pill format-btn" data-format="input">赤文字入力</button>
+        </div>
+      </section>
+
+      <section class="setup-card">
+        <h2 class="section-label">オプション</h2>
+        <div class="grid-3">
+          <button type="button" id="opt-reverse" class="toggle-pill">通常（Q→A）</button>
+          <button type="button" id="opt-shuffle" class="toggle-pill">登録順</button>
+          <button type="button" id="opt-redsheet" class="toggle-pill">赤シート: OFF</button>
+        </div>
+      </section>
+
+      <section class="setup-card exam-row">
+        <label for="exam-date" class="section-label">試験日</label>
+        <div class="exam-controls">
+          <input type="date" id="exam-date">
+          <span id="exam-countdown" class="countdown-badge">未設定</span>
+        </div>
+      </section>
+
+      <div class="start-actions">
+        <button type="button" id="btn-start-study" class="btn-primary-large">学習を始める</button>
+        <button type="button" id="btn-reset-progress" class="btn-text-muted">学習履歴をリセット</button>
+      </div>
+    </main>
+
+    <!-- タブ2: 直前一覧シート -->
+    <section id="panel-sheet" class="tab-panel">
+      <div class="panel-toolbar no-print">
+        <button type="button" id="sheet-redsheet-toggle" class="btn-sub">赤シート切替</button>
+        <button type="button" id="btn-print-sheet" class="btn-sub">印刷 / PDF保存</button>
+      </div>
+      <div id="sheet-list" class="sheet-container"></div>
+    </section>
+
+    <!-- タブ3: 成績・分析 -->
+    <section id="panel-stats" class="tab-panel">
+      <div id="stats-container" class="stats-grid"></div>
+    </section>
+
+    <!-- タブ4: 追加・管理 -->
+    <section id="panel-manage" class="tab-panel">
+      <div class="setup-card">
+        <div class="row-between">
+          <h2 class="section-label">AIテキスト一括追加</h2>
+          <button type="button" id="btn-copy-prompt" class="btn-sub">AI用指示文をコピー</button>
+        </div>
+        <textarea id="import-text" rows="5" placeholder="カテゴリ | 問題文（表面） | 【重要語句や数式】を含む答え（裏面） | ヒント"></textarea>
+        <button type="button" id="btn-import" class="btn-primary">一括インポート</button>
+      </div>
+
+      <div class="setup-card">
+        <h2 class="section-label">1問ずつ追加（画像添付対応）</h2>
+        <div class="form-stack">
+          <input type="text" id="new-card-cat" placeholder="カテゴリ（例：1.トルコ人の移動）">
+          <textarea id="new-card-front" rows="2" placeholder="表面（Q）の問題文・数式"></textarea>
+          <textarea id="new-card-back" rows="2" placeholder="裏面（A）の答え（赤シートで隠す語句は【 】で囲む）"></textarea>
+          <input type="text" id="new-card-hint" placeholder="ヒント（任意）">
+          <div class="row-between">
+            <label class="btn-sub file-label">
+              画像を添付
+              <input type="file" id="new-card-image" accept="image/*" hidden>
+            </label>
+            <span id="new-card-image-preview" class="muted-small">画像なし</span>
+          </div>
+          <button type="button" id="btn-add-single" class="btn-sub">このカードを追加</button>
+        </div>
+      </div>
+
+      <div class="setup-card">
+        <h2 class="section-label">バックアップ・共有</h2>
+        <div class="grid-3">
+          <button type="button" id="btn-export-json" class="btn-sub">JSON保存</button>
+          <label class="btn-sub file-label">
+            JSON読込
+            <input type="file" id="import-json-file" accept=".json,application/json" hidden>
+          </label>
+          <button type="button" id="btn-share-url" class="btn-sub">共有URL作成</button>
+        </div>
+        <div id="share-output" class="share-box hidden"></div>
+      </div>
+
+      <div class="setup-card">
+        <div class="row-between">
+          <h2 class="section-label">登録カード一覧</h2>
+          <input type="search" id="manage-search" placeholder="検索...">
+        </div>
+        <div id="manage-card-list" class="manage-list"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== 2. 学習集中画面（全画面） ==================== -->
+  <div id="view-study" class="study-screen hidden">
+    <header class="study-topbar">
+      <button type="button" id="btn-exit-study" class="btn-ghost">← 設定</button>
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="progress-text">1 / 1</span>
+          <span id="study-phase-badge" class="phase-pill"></span>
+        </div>
+      </div>
+      <div class="study-tools">
+        <button type="button" id="btn-study-redsheet" class="btn-ghost" title="赤シート">赤</button>
+        <button type="button" id="btn-undo" class="btn-ghost" title="1つ戻る">↩</button>
+      </div>
+    </header>
+
+    <!-- 復習モード突入時のみ表示する告知オーバーレイ -->
+    <div id="review-interstitial" class="interstitial-overlay hidden">
+      <div class="interstitial-box">
+        <div class="interstitial-title">復習モード</div>
+        <div id="review-count-label" class="interstitial-sub">5問</div>
+        <button type="button" id="btn-start-review" class="btn-primary-large">始める</button>
+      </div>
+    </div>
+
+    <!-- 完了画面オーバーレイ -->
+    <div id="complete-interstitial" class="interstitial-overlay hidden">
+      <div class="interstitial-box">
+        <div class="interstitial-title">完了</div>
+        <div id="complete-summary" class="interstitial-sub"></div>
+        <div class="interstitial-actions">
+          <button type="button" id="btn-restart-session" class="btn-primary">もう一度</button>
+          <button type="button" id="btn-complete-home" class="btn-sub">設定へ戻る</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中央フラッシュカード（Q / A 極限シンプル構成） -->
+    <main class="study-main">
+      <div id="card-stage" class="flashcard">
+        <div id="swipe-badge-left" class="swipe-indicator left">×</div>
+        <div id="swipe-badge-right" class="swipe-indicator right">◯</div>
+
+        <button type="button" id="btn-pin" class="pin-btn" aria-label="ピン留め">☆</button>
+
+        <!-- 表面 -->
+        <div id="card-front" class="card-face">
+          <span class="side-badge">Q</span>
+          <div class="card-scroll-body">
+            <img id="front-image" class="card-img hidden" alt="">
+            <div id="front-content" class="card-text"></div>
+          </div>
+          <div class="card-footer-slot">
+            <button type="button" id="btn-hint" class="hint-btn hidden">💡 ヒント</button>
+            <div id="hint-text" class="hint-box hidden"></div>
+          </div>
+        </div>
+
+        <!-- 裏面（解説枠なし・メイン解答のみ） -->
+        <div id="card-back" class="card-face hidden">
+          <span class="side-badge back">A</span>
+          <div class="card-scroll-body">
+            <img id="back-image" class="card-img hidden" alt="">
+            <div id="back-content" class="card-text"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 下部操作エリア（形式に応じて切替） -->
+    <footer class="study-bottom">
+      <!-- 1. カードめくり用 ◯ / × ボタン -->
+      <div id="flip-controls" class="judge-row">
+        <button type="button" id="btn-wrong" class="judge-btn wrong">×</button>
+        <button type="button" id="btn-correct" class="judge-btn correct">◯</button>
+      </div>
+
+      <!-- 2. ランダム4択用 -->
+      <div id="choice-container" class="choice-grid hidden"></div>
+
+      <!-- 3. 赤文字入力用 -->
+      <div id="input-container" class="input-area hidden">
+        <div class="input-row">
+          <input type="text" id="answer-input" placeholder="答えを入力..." autocomplete="off">
+          <button type="button" id="btn-submit-answer" class="btn-primary">判定</button>
+        </div>
+        <div id="input-feedback" class="input-feedback hidden"></div>
+        <button type="button" id="btn-input-next" class="btn-primary hidden">次へ</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
